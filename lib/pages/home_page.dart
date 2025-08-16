@@ -2,7 +2,11 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:travel_app/core/colors.dart';
+import 'package:travel_app/core/data/shared_preference.dart';
 import 'package:travel_app/core/descriptions.dart';
+import 'package:travel_app/pages/splash_page.dart';
+import 'package:travel_app/pages/trip_details_page.dart';
+
 
 // ignore: must_be_immutable
 class HomePage extends StatelessWidget {
@@ -28,6 +32,15 @@ class HomePage extends StatelessWidget {
   void _navigate(int index) {
     _selectedPage = index;
   }
+
+  // new trip.
+  final Map <String, dynamic> newTrip =    
+  {
+      'source': 'assets/images/new_trip.jpeg',
+      'title': 'Lake Annecy , France',
+      'description': Descriptions.new_trip.trim(),
+      'rating': 4.9.toString(),
+  };
 
   // trips.
   final List<Map<String, String>> trips = [
@@ -106,6 +119,21 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
 
+                  // temp logout button.
+                  IconButton(
+                    onPressed: (){
+                      SharedPreferenceHelper().clear();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SplashPage()), 
+                        (_) => false
+                      );
+                    }, 
+                    icon: const Icon(
+                      Icons.logout
+                    )
+                  ),
+
                   // serach button.
                   GestureDetector(
                     onTap: () {},
@@ -131,85 +159,92 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 15),
 
               // genine lake, france.
-              Container(
-                height: 350,
-                width: double.infinity,
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/new_trip.jpeg'),
-                    fit: BoxFit.cover,
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => TripDetailsPage(trip: newTrip))
+                  );
+                },
+                child: Container(
+                  height: 350,
+                  width: double.infinity,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    image: DecorationImage(
+                      image: AssetImage(newTrip['source']),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // new for you.
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25),
-                            color: ColorsManager.darkBrown,
-                          ),
-                          child: Text(
-                            'New for you',
-                            style: GoogleFonts.robotoFlex(
-                              color: ColorsManager.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // new for you.
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25),
+                              color: ColorsManager.darkBrown,
+                            ),
+                            child: Text(
+                              'New for you',
+                              style: GoogleFonts.robotoFlex(
+                                color: ColorsManager.white,
+                              ),
                             ),
                           ),
-                        ),
-
-                        // rating.
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25),
-                            color: Colors.white70,
+                
+                          // rating.
+                          Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25),
+                              color: Colors.white70,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                // star.
+                                Icon(
+                                  Icons.star_purple500_sharp,
+                                  color: Colors.amber,
+                                ),
+                
+                                // rating.
+                                Text(
+                                  newTrip['rating'],
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              // star.
-                              Icon(
-                                Icons.star_purple500_sharp,
-                                color: Colors.amber,
-                              ),
-
-                              // rating.
-                              Text(
-                                '4.9',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const Spacer(),
-
-                    // trip name.
-                    Text(
-                      'Lake Annecy , France',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        ],
                       ),
-                    ),
-
-                    // description.
-                    Text(
-                      Descriptions.new_trip.trim(),
-                      maxLines: 2,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                
+                      const Spacer(),
+                
+                      // trip name.
+                      Text(
+                        newTrip['title'],
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                
+                      // description.
+                      Text(
+                        Descriptions.new_trip.trim(),
+                        maxLines: 2,
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
               ),
 

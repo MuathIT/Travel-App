@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:travel_app/core/colors.dart';
+import 'package:travel_app/pages/auth/login_page.dart';
+import 'package:travel_app/pages/auth/register_page.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
@@ -53,7 +55,13 @@ class SplashPage extends StatelessWidget {
                     children: [
                       // create new account button.
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          // navigate to register page.
+                          Navigator.push(
+                            context, 
+                            MaterialPageRoute(builder: (_) => RegisterPage())
+                          );
+                        },
                         child: Container(
                           width: double.infinity,
                           padding: EdgeInsets.all(15),
@@ -75,7 +83,13 @@ class SplashPage extends StatelessWidget {
 
                       // i already have an account button.
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          // navigate to login page.
+                          Navigator.push(
+                            context, 
+                            MaterialPageRoute(builder: (_) => LoginPage())
+                          );
+                        },
                         child: Text(
                           'I already have an account',
                           style: GoogleFonts.lato(
