@@ -20,7 +20,6 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),

@@ -4,9 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:travel_app/core/colors.dart';
 import 'package:travel_app/core/data/shared_preference.dart';
 import 'package:travel_app/core/descriptions.dart';
+import 'package:travel_app/pages/search_page.dart';
 import 'package:travel_app/pages/splash_page.dart';
 import 'package:travel_app/pages/trip_details_page.dart';
-
 
 // ignore: must_be_immutable
 class HomePage extends StatelessWidget {
@@ -34,12 +34,11 @@ class HomePage extends StatelessWidget {
   }
 
   // new trip.
-  final Map <String, dynamic> newTrip =    
-  {
-      'source': 'assets/images/new_trip.jpeg',
-      'title': 'Lake Annecy , France',
-      'description': Descriptions.new_trip.trim(),
-      'rating': 4.9.toString(),
+  final Map<String, dynamic> newTrip = {
+    'source': 'assets/images/new_trip.jpeg',
+    'title': 'Lake Annecy , France',
+    'description': Descriptions.new_trip.trim(),
+    'rating': 4.9.toString(),
   };
 
   // trips.
@@ -67,8 +66,18 @@ class HomePage extends StatelessWidget {
     },
   ];
 
+
+
   @override
   Widget build(BuildContext context) {
+  // this method will navigate the pressed trip to the trip details page.
+  void goToTripDetailsPage (Map<String, dynamic> trip){
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TripDetailsPage(trip: trip),
+      ),
+    );
+  }
     return Scaffold(
       backgroundColor: ColorsManager.white,
       bottomNavigationBar: CurvedNavigationBar(
@@ -91,79 +100,78 @@ class HomePage extends StatelessWidget {
           Icon(Icons.people_outline, size: 30, color: Colors.white),
         ],
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // my own appbar.
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // avatar.
-                  CircleAvatar(
-                    radius: 25,
-                    backgroundImage: ExactAssetImage(
-                      'assets/images/avatar1.jpeg',
-                    ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // my own appbar.
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // avatar.
+                CircleAvatar(
+                  radius: 25,
+                  backgroundImage: ExactAssetImage(
+                    'assets/images/avatar1.jpeg',
                   ),
-
-                  // trip planner.
-                  Text(
-                    'Trip Planner',
-                    style: GoogleFonts.lato(
-                      color: ColorsManager.darkBrown,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+        
+                // trip planner.
+                Text(
+                  'Trip Planner',
+                  style: GoogleFonts.lato(
+                    color: ColorsManager.darkBrown,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
-
-                  // temp logout button.
-                  IconButton(
-                    onPressed: (){
-                      SharedPreferenceHelper().clear();
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => const SplashPage()), 
-                        (_) => false
-                      );
-                    }, 
-                    icon: const Icon(
-                      Icons.logout
-                    )
-                  ),
-
-                  // serach button.
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      height: 45,
-                      width: 45,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          style: BorderStyle.solid,
-                          color: Colors.grey.shade300,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset('assets/icons/search_icon.png'),
+                ),
+        
+                // temp logout button.
+                IconButton(
+                  onPressed: () {
+                    SharedPreferenceHelper().clear();
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SplashPage()),
+                      (_) => false,
+                    );
+                  },
+                  icon: const Icon(Icons.logout),
+                ),
+        
+                // serach button.
+                GestureDetector(
+                  onTap: () {
+                    // navigate to the search page.
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => SearchPage())
+                    );
+                  },
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        style: BorderStyle.solid,
+                        color: Colors.grey.shade300,
                       ),
                     ),
+                    child: Image.asset('assets/icons/search_icon.png'),
                   ),
-                ],
-              ),
-
-              const SizedBox(height: 15),
-
-              // genine lake, france.
-              GestureDetector(
+                ),
+              ],
+            ),
+        
+            const SizedBox(height: 15),
+        
+            Expanded(
+              child: GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => TripDetailsPage(trip: newTrip))
-                  );
+                  // go to details page.
+                  goToTripDetailsPage(newTrip);
                 },
                 child: Container(
                   height: 350,
@@ -196,7 +204,7 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                           ),
-                
+                          
                           // rating.
                           Container(
                             padding: EdgeInsets.all(5),
@@ -205,27 +213,30 @@ class HomePage extends StatelessWidget {
                               color: Colors.white70,
                             ),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
                               children: [
                                 // star.
                                 Icon(
                                   Icons.star_purple500_sharp,
                                   color: Colors.amber,
                                 ),
-                
+                          
                                 // rating.
                                 Text(
                                   newTrip['rating'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                         ],
                       ),
-                
+                          
                       const Spacer(),
-                
+                          
                       // trip name.
                       Text(
                         newTrip['title'],
@@ -235,7 +246,7 @@ class HomePage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                
+                          
                       // description.
                       Text(
                         Descriptions.new_trip.trim(),
@@ -247,64 +258,73 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-
-              const SizedBox(height: 20),
-              // popular destinations.
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Popular destinations',
-                    style: TextStyle(
-                      color: ColorsManager.darkBrown,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+            ),
+                        
+            const SizedBox(height: 20),
+            // popular destinations.
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Popular destinations',
+                  style: TextStyle(
+                    color: ColorsManager.darkBrown,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-
-                  // view all button.
-                  GestureDetector(
-                    onTap: () {},
-                    child: Row(
-                      children: [
-                        Text(
-                          'View all',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                          ),
+                ),
+                        
+                // view all button.
+                GestureDetector(
+                  onTap: () {},
+                  child: Row(
+                    children: [
+                      Text(
+                        'View all',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
                         ),
-
-                        const SizedBox(width: 5),
-
-                        // arrow.
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.grey.shade600,
-                          size: 12,
-                        ),
-                      ],
-                    ),
+                      ),
+                        
+                      const SizedBox(width: 5),
+                        
+                      // arrow.
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.grey.shade600,
+                        size: 12,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 20),
 
-              // popular trips.
-              Expanded(
-                child: ListView.separated(
-                  itemCount: 3,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 10),
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    // current index trip.
-                    final trip = trips[index];
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // trip image.
-                        Container(
+            // popular trips.
+            SizedBox(
+              height: 250,
+              child: ListView.separated(
+                itemCount: 3,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(width: 10),
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  // current index trip.
+                  final trip = trips[index];
+                        
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // trip image.
+                      GestureDetector(
+                        onTap: (){
+                          // go to details page.
+                          goToTripDetailsPage(trip);                          
+                        },
+                        child: Container(
                           height: 175,
                           width: 175,
                           decoration: BoxDecoration(
@@ -327,18 +347,21 @@ class HomePage extends StatelessWidget {
                                     color: Colors.white70,
                                   ),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
                                       // star.
                                       Icon(
                                         Icons.star_purple500_sharp,
                                         color: Colors.amber,
                                       ),
-                                
+                          
                                       // rating.
                                       Text(
-                                        '4.9',
-                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        trip['rating']!,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -347,34 +370,38 @@ class HomePage extends StatelessWidget {
                             ],
                           ),
                         ),
+                      ),
 
-                        // trip title.
-                        Text(
-                          trip['title']!,
-                          style: TextStyle(
-                            color: ColorsManager.darkBrown,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      const SizedBox(height: 5),
+                        
+                      // trip title.
+                      Text(
+                        trip['title']!,
+                        style: TextStyle(
+                          color: ColorsManager.darkBrown,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
 
-                        // trip description.
-                        SizedBox(
-                          width: 175,
-                          child: Text(
-                            trip['description']!,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: Colors.brown[300]),
-                          ),
+                      // const SizedBox(height: 15),
+                      
+                      // trip description.
+                      SizedBox(
+                        width: 175,
+                        child: Text(
+                          trip['description']!,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.brown[300]),
                         ),
-                      ],
-                    );
-                  },
-                ),
+                      ),
+                    ],
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
