@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:travel_app/core/colors.dart';
-import 'package:travel_app/pages/trip_details_page.dart';
+import 'package:travel_app/pages/trip_details/trip_details_page.dart';
 
 class DestinationsPage extends StatelessWidget {
   final List< Map<String, dynamic> > trips; // get the trips.

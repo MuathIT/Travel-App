@@ -5,8 +5,8 @@ import 'package:travel_app/controllers/auth/auth_controller.dart';
 import 'package:travel_app/controllers/auth/search/search_controllers.dart';
 import 'package:travel_app/core/data/shared_preference.dart';
 import 'package:travel_app/firebase_options.dart';
-import 'package:travel_app/pages/home_page.dart';
-import 'package:travel_app/pages/splash_page.dart';
+import 'package:travel_app/pages/home/home_page.dart';
+import 'package:travel_app/pages/splash/splash_page.dart';
 
 
 void main() async{

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travel_app/controllers/auth/auth_controller.dart';
-import 'package:travel_app/pages/home_page.dart';
+import 'package:travel_app/pages/home/home_page.dart';
 
 class AuthPage extends StatelessWidget {
   final double? height;

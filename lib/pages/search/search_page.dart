@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travel_app/controllers/auth/search/search_controllers.dart';
 import 'package:travel_app/core/colors.dart';
-import 'package:travel_app/pages/trip_details_page.dart';
+import 'package:travel_app/pages/trip_details/trip_details_page.dart';
 
 class SearchPage extends StatelessWidget {
   SearchPage({super.key});
@@ -41,9 +41,9 @@ class SearchPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: TextField(
-                onSubmitted: (destination) {
-                  // submit the searched destination to the API.
-                  context.read<SearchCubit>().getTrip(destination.trim());
+                onChanged: (value) {
+                  // change the value to the API.
+                  context.read<SearchCubit>().getSuggestions(value.trim());
                 },
                 controller: _searchController,
                 decoration: InputDecoration(
@@ -81,13 +81,17 @@ class SearchPage extends StatelessWidget {
 
           BlocConsumer<SearchCubit, SearchState>(
             listener: (context, state) {
+              if (state is SearchSuccess){
+                // push the trip details page and display the searched trip. (always use listner for navigate not the builder.)
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => TripDetailsPage(trip: state.trip)));
+              }
               // display the failure message.
-              if (state is SearchFailure) {
+              else if (state is SearchFailure) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     backgroundColor: Colors.red,
                     content: Text(state.failureMessage),
-                    duration: Duration(milliseconds: 900),
+                    duration: Duration(milliseconds: 1200),
                   ),
                 );
               }
@@ -96,58 +100,31 @@ class SearchPage extends StatelessWidget {
               if (state is SearchLoading) {
                 // show dialog when loading.
                 return const SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              } else if (state is SearchSuccess) {
-                // get the trip details.
-                final trip = state.trip;
-                // body.
-                return SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        // trip pic.
-                        GestureDetector(
-                          onTap: () {
-                            // navigate to trip details.
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => TripDetailsPage(trip: trip),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            height: 150,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
-                              boxShadow: [
-                                BoxShadow(color: Colors.black, blurRadius: 6),
-                              ],
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: trip['originalimage']['source'],
-                              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                              errorWidget:(context, url, error) => const Center(child: Icon(
-                                Icons.broken_image_outlined,
-                              )),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        // trip name.
-                        Text(
-                          trip['title'],
-                          style: TextStyle(
-                            color: ColorsManager.darkBrown,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+                    padding: EdgeInsets.all(25),
+                    child: Center(child: CircularProgressIndicator(color: Colors.brown)),
+                  ),
+                );
+              } else if (state is SearchSuggestions) {
+                // build the trips.
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: state.suggestions.length,
+                    (context, index) {
+                      // get the current suggetion from the fetched trips.
+                      final suggestion = state.suggestions[index];
+                      
+                      // display the current suggested trip.
+                      return ListTile(
+                        title: Text(suggestion),
+                        onTap: (){
+                          // fill the text filed with the trip name.
+                          _searchController.text = suggestion;
+                          // send the chosen trip to the getTrip function.
+                          context.read<SearchCubit>().getTrip(suggestion);
+                        },
+                      );
+                    },
                   ),
                 );
               }

@@ -4,10 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:travel_app/core/colors.dart';
 import 'package:travel_app/core/data/shared_preference.dart';
 import 'package:travel_app/core/descriptions.dart';
-import 'package:travel_app/pages/destinations_page.dart';
-import 'package:travel_app/pages/search_page.dart';
-import 'package:travel_app/pages/splash_page.dart';
-import 'package:travel_app/pages/trip_details_page.dart';
+import 'package:travel_app/pages/destinations/destinations_page.dart';
+import 'package:travel_app/pages/search/search_page.dart';
+import 'package:travel_app/pages/splash/splash_page.dart';
+import 'package:travel_app/pages/trip_details/trip_details_page.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatelessWidget {
