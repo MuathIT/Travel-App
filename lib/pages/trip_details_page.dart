@@ -34,10 +34,10 @@ class TripDetailsPage extends StatelessWidget {
           Icon(Icons.star_purple500_sharp, color: Colors.amber),
           const SizedBox(width: 5),
           // rating.
-          Text(
-            trip['rating'],
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+          // Text(
+          //   trip['rating'],
+          //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          // ),
         ],
         actionsPadding: EdgeInsets.all(16),
       ),
@@ -53,7 +53,7 @@ class TripDetailsPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [BoxShadow(color: Colors.black87, blurRadius: 8)],
                 image: DecorationImage(
-                  image: AssetImage(trip['source']),
+                  image: NetworkImage(trip['originalimage']['source']),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -63,7 +63,7 @@ class TripDetailsPage extends StatelessWidget {
 
             // trip description.
             Text(
-              trip['description'],
+              trip['extract'],
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 18,

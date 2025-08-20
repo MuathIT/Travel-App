@@ -6,7 +6,7 @@ import 'package:travel_app/pages/home_page.dart';
 class AuthPage extends StatelessWidget {
   final double? height;
   final Widget child;
-  const AuthPage({super.key, this.height = 600, required this.child});
+  const AuthPage({super.key, this.height = 650, required this.child});
 
   @override
   Widget build(BuildContext context) {

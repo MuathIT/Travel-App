@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:travel_app/core/colors.dart';
 import 'package:travel_app/core/data/shared_preference.dart';
 import 'package:travel_app/core/descriptions.dart';
+import 'package:travel_app/pages/destinations_page.dart';
 import 'package:travel_app/pages/search_page.dart';
 import 'package:travel_app/pages/splash_page.dart';
 import 'package:travel_app/pages/trip_details_page.dart';
@@ -103,7 +104,6 @@ class HomePage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(
-          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // my own appbar.
             Row(
@@ -275,8 +275,13 @@ class HomePage extends StatelessWidget {
                 ),
                         
                 // view all button.
-                GestureDetector(
-                  onTap: () {},
+                TextButton(
+                  onPressed: (){
+                    // navigate to destinations page.
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => DestinationsPage(trips: trips))
+                    );
+                  },
                   child: Row(
                     children: [
                       Text(
@@ -374,7 +379,7 @@ class HomePage extends StatelessWidget {
 
                       const SizedBox(height: 5),
                         
-                      // trip title.
+                      // trip name.
                       Text(
                         trip['title']!,
                         style: TextStyle(

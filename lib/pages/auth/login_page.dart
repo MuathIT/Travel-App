@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AuthPage(
-      height: 425,
+      height: 450,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
