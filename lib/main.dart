@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travel_app/controllers/auth/auth_controller.dart';
 import 'package:travel_app/controllers/auth/search/search_controllers.dart';
+import 'package:travel_app/controllers/home/home_controller.dart';
 import 'package:travel_app/core/data/shared_preference.dart';
 import 'package:travel_app/firebase_options.dart';
 import 'package:travel_app/pages/home/home_page.dart';
@@ -25,6 +26,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => AuthCubit(),
+        ),
+        BlocProvider(
+          create: (context) => HomeCubit()..loadHomeTrips(),
         ),
         BlocProvider(
           create: (context) => SearchCubit(),

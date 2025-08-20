@@ -69,8 +69,9 @@ class SearchCubit extends Cubit<SearchState> {
       //   'https://api.allorigins.win/get?url=${Uri.encodeComponent('https://en.wikipedia.org/w/api.php?action=opensearch&search=$query&limit=10&format=json')}'
       // ); // this for CROS proxy in web.
 
-      // get the suggestions trips titles.
+      // get the suggestions.
       final List suggestions = response.data[1];
+
       // handle the empty suggestions.
       if (suggestions.isEmpty){
         emit(SearchEmpty('No suggestions found'));
@@ -81,7 +82,8 @@ class SearchCubit extends Cubit<SearchState> {
       
     } on DioException catch (e) {
       emit(SearchFailure("Error: ${e.message}"));
-      print(e.message);
+    } catch (e) {
+      emit(SearchFailure('Unexpected error: $e'));
     }
   }
 
@@ -101,9 +103,35 @@ class SearchCubit extends Cubit<SearchState> {
       final response = await dio.get(
         'https://en.wikipedia.org/api/rest_v1/page/summary/$destination'
       );
-      emit(SearchSuccess(response.data));
+
+      // handle the null response.
+      if (response.data == null){
+        emit(SearchEmpty('No Trip found for $destination'));
+        return;
+      }
+
+      // get the data as map of string and dynamic.
+      final data = response.data as Map<String, dynamic>;
+
+      // handle the empty data.
+      if (data.isEmpty){
+        emit(SearchEmpty('No Trip found for $destination'));
+        return;
+      }
+
+      // extract the needed fields & handle their null values.
+      final trip = {
+        'title' : data['title'] ?? 'Unknown',
+        'description' : data['extract'] ?? 'No description available' ,
+        'image' : data['originalimage']['source'] ?? 'No image to display'
+      };
+      emit(SearchSuccess(trip));
+
     } on DioException catch (e) {
       emit(SearchFailure("Error: ${e.message}"));
+    } catch (e) {
+      emit(SearchFailure('Unexpected error: $e'));
     }
+    
   }
 }

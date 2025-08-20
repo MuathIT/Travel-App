@@ -57,7 +57,7 @@ class TripDetailsPage extends StatelessWidget {
               child: ClipRRect(
                 borderRadius:BorderRadius.circular(16),
                 child: CachedNetworkImage( // this widget let you handle the image loading & error.
-                  imageUrl: trip['originalimage']['source'],
+                  imageUrl: trip['image'],
                   fit: BoxFit.cover,
                   placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.grey,)), // show loading indicator when loading the image.
                   errorWidget: (context, url, error) => const Icon(Icons.broken_image_outlined, size: 80, color: Colors.grey), // handles the error.
@@ -69,7 +69,7 @@ class TripDetailsPage extends StatelessWidget {
 
             // trip description.
             Text(
-              trip['extract'],
+              trip['description'],
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 18,

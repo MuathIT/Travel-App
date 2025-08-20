@@ -45,6 +45,7 @@ class SearchPage extends StatelessWidget {
                   // change the value to the API.
                   context.read<SearchCubit>().getSuggestions(value.trim());
                 },
+                onSubmitted: (value) => context.read<SearchCubit>().getTrip(value),
                 controller: _searchController,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 10),
@@ -105,7 +106,20 @@ class SearchPage extends StatelessWidget {
                     child: Center(child: CircularProgressIndicator(color: Colors.brown)),
                   ),
                 );
-              } else if (state is SearchSuggestions) {
+              } else if (state is SearchEmpty){
+                return SliverToBoxAdapter(
+                  child: Center(
+                    child: Text(
+                      state.emptyMessage,
+                      style: TextStyle(
+                        color: Colors.brown,
+                        fontSize: 18
+                      ),
+                    ),
+                  ),
+                );
+              }
+              else if (state is SearchSuggestions) {
                 // build the trips.
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
@@ -129,7 +143,14 @@ class SearchPage extends StatelessWidget {
                 );
               }
               return SliverToBoxAdapter(
-                child: const Center(child: Text('Search for a trip')),
+                child: const Center(
+                  child: Text(
+                    'Search for a trip',
+                    style: TextStyle(
+                      color: Colors.brown,
+                      fontSize: 18
+                    ),
+                  )),
               );
             },
           ),
