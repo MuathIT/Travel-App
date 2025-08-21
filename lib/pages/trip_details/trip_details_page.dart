@@ -30,17 +30,17 @@ class TripDetailsPage extends StatelessWidget {
         ),
 
         // rating.
-        actions: [
-          // star.
-          Icon(Icons.star_purple500_sharp, color: Colors.amber),
-          const SizedBox(width: 5),
-          // rating.
-          // Text(
-          //   trip['rating'],
-          //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          // ),
-        ],
-        actionsPadding: EdgeInsets.all(16),
+        // actions: [
+        //   // star.
+        //   Icon(Icons.star_purple500_sharp, color: Colors.amber),
+        //   const SizedBox(width: 5),
+        //   // rating.
+        //   // Text(
+        //   //   trip['rating'],
+        //   //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        //   // ),
+        // ],
+        // actionsPadding: EdgeInsets.all(16),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
@@ -59,7 +59,7 @@ class TripDetailsPage extends StatelessWidget {
                 child: CachedNetworkImage( // this widget let you handle the image loading & error.
                   imageUrl: trip['image'],
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.grey,)), // show loading indicator when loading the image.
+                  placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.brown,)), // show loading indicator when loading the image.
                   errorWidget: (context, url, error) => const Icon(Icons.broken_image_outlined, size: 80, color: Colors.grey), // handles the error.
                 ),
               ),

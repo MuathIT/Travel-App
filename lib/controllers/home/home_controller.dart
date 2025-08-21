@@ -1,5 +1,7 @@
 
 // ---------- Home States ----------
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,8 +12,9 @@ class HomeInitial extends HomeState{}
 class HomeLoading extends HomeState{}
 
 class HomeSuccess extends HomeState{
-  final List< Map<String, dynamic> >trips;
-  HomeSuccess(this.trips);
+  final Map<String, dynamic> randomTrip; // for new for you trip.
+  final List< Map<String, dynamic> > popularTrips; // for popular trips.
+  HomeSuccess(this.randomTrip ,this.popularTrips);
 }
 
 class HomeFailure extends HomeState{
@@ -25,34 +28,64 @@ class HomeCubit extends Cubit<HomeState> {
 
   final Dio dio = Dio();
 
-  // this method will get the popular trips.
-  Future<void> loadHomeTrips () async{
+  // this method will load the home data.
+  Future<void> loadHomeData () async{
     emit(HomeLoading());
 
     try {
       // list of the popular trips titles.
-      final popularTrips = [
+      final popularCities = [
         'Bangkok', 
         'London', 
         'Paris', 
         'Dubai', 
-        'Singapore', 
+        'Barcelona', 
         'New York City', 
         'Istanbul', 
         'Tokyo', 
         'Cape Town', 
         'Melbourne', 
-        'Iceland', 
-        'Barcelona'
+        'Vienna', 
+        'Milan',
+        'Rome',
+        'Amsterdam',
       ];
 
+      // get a random trip from the above trips.
+      final randomTrip = popularCities[Random().nextInt(popularCities.length)];
+      
+      popularCities.remove(randomTrip); // remove the given random trip so it doesn't show up again in the popular trips section.
+      // here will store the given random trip details into the new trip.
+      final Map<String, dynamic> newTrip;
+
+      // get the details from the API.
+      final randomResponse = await dio.get(
+        'https://en.wikipedia.org/api/rest_v1/page/summary/$randomTrip'
+      ) ;
+      
+      // handle the null response.
+      if (randomResponse.data == null){
+        emit(HomeInitial());
+        return;
+      }
+
+      // store the random response data.
+      final randomData = randomResponse.data;
+
+      // store the random trip details in the randomTrip.
+      newTrip = {
+        'title' : randomData['title'] ?? 'Unknown',
+        'description' : randomData['extract'] ?? 'No description available',
+        'image' : randomData['originalimage']['source'] ?? 'No image to display'
+      };
+
       // list to store the trips.
-      final List< Map<String, dynamic> >homeTrips = [];
+      final List< Map<String, dynamic> >popularTrips = [];
 
       // get each trip details.
-      for (var trip in popularTrips){
+      for (var city in popularCities){
         final response = await dio.get(
-          'https://en.wikipedia.org/api/rest_v1/page/summary/$trip'
+          'https://en.wikipedia.org/api/rest_v1/page/summary/$city'
         );
 
         // handle the null response.
@@ -60,22 +93,19 @@ class HomeCubit extends Cubit<HomeState> {
           emit(HomeInitial());
           return;
         }
+
         // store the current trip data.
         final data = response.data as Map<String, dynamic>;
-        // handle the empty data.
-        if (data.isEmpty){
-          emit(HomeInitial());
-          return;
-        }
+
         // add each trip details.
-        homeTrips.add({
-          'title': data['title'] ?? trip,
+        popularTrips.add({
+          'title': data['title'] ?? city,
           'description' : data['extract'] ?? 'No description availavble',
           'image' : data['originalimage']['source'] ?? 'No image to dispaly'
         });
       }
 
-      emit(HomeSuccess(homeTrips));
+      emit(HomeSuccess(newTrip , popularTrips));
     } catch (e) {
       emit(HomeFailure('Failed to load the tips'));
     }

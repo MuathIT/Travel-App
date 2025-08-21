@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
           create: (context) => AuthCubit(),
         ),
         BlocProvider(
-          create: (context) => HomeCubit()..loadHomeTrips(),
+          create: (context) => HomeCubit()..loadHomeData(),
         ),
         BlocProvider(
           create: (context) => SearchCubit(),
