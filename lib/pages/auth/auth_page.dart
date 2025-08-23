@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:travel_app/bottom_bar/bottom_bar.dart';
 import 'package:travel_app/controllers/auth/auth_controller.dart';
-import 'package:travel_app/pages/home/home_page.dart';
 
 class AuthPage extends StatelessWidget {
   final double? height;
@@ -39,7 +39,7 @@ class AuthPage extends StatelessWidget {
           else if (state is AuthSuccess){
             // navigate to home page.
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => HomePage())
+              MaterialPageRoute(builder: (_) => BottomBar())
             );
           }
           else if (state is AuthFailure){

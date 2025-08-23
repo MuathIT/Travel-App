@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:travel_app/controllers/auth/search/search_controllers.dart';
+import 'package:travel_app/controllers/search/search_controllers.dart';
 import 'package:travel_app/core/colors.dart';
 import 'package:travel_app/pages/trip_details/trip_details_page.dart';
 

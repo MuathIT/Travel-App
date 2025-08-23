@@ -28,12 +28,13 @@ class AuthCubit extends Cubit<AuthState> {
 
   // register method.
   Future<void> register (String name, String email, String password) async{
+    final uid = FirebaseAuth.instance.currentUser?.uid;
     emit (AuthLoading());
     try {
       // register the user.
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
       // save the user data in a document.
-      await FirebaseFirestore.instance.collection('users').add(
+      await FirebaseFirestore.instance.collection('users').doc(uid).set(
         {
           'name' : name,
           'email' : email,

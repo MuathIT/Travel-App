@@ -50,7 +50,7 @@ class HomeCubit extends Cubit<HomeState> {
         'Rome',
         'Amsterdam',
       ];
-
+      
       // get a random trip from the above trips.
       final randomTrip = popularCities[Random().nextInt(popularCities.length)];
       
@@ -76,7 +76,8 @@ class HomeCubit extends Cubit<HomeState> {
       newTrip = {
         'title' : randomData['title'] ?? 'Unknown',
         'description' : randomData['extract'] ?? 'No description available',
-        'image' : randomData['originalimage']['source'] ?? 'No image to display'
+        'image' : randomData['originalimage']['source'] ?? 'No image to display',
+        'rating' : ( (3 + Random().nextDouble() * 2)).toStringAsFixed(1), // generate random rating from 3 to 5. 
       };
 
       // list to store the trips.
@@ -101,7 +102,8 @@ class HomeCubit extends Cubit<HomeState> {
         popularTrips.add({
           'title': data['title'] ?? city,
           'description' : data['extract'] ?? 'No description availavble',
-          'image' : data['originalimage']['source'] ?? 'No image to dispaly'
+          'image' : data['originalimage']['source'] ?? 'No image to dispaly',
+          'rating' : ( (3 + Random().nextDouble() * 2)).toStringAsFixed(1), // generate random rating from 3 to 5. 
         });
       }
 

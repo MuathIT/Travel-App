@@ -21,8 +21,6 @@ class RegisterPage extends StatelessWidget {
     return _pwdController.text.trim() == _confirmPwdController.text.trim();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return AuthPage(

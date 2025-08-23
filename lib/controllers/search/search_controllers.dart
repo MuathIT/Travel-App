@@ -3,6 +3,8 @@
 
 // ---------- Search States ----------
 
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -123,7 +125,8 @@ class SearchCubit extends Cubit<SearchState> {
       final trip = {
         'title' : data['title'] ?? 'Unknown',
         'description' : data['extract'] ?? 'No description available' ,
-        'image' : data['originalimage']['source'] ?? 'No image to display'
+        'image' : data['originalimage']['source'] ?? 'No image to display',
+        'rating' : ( (3 + Random().nextDouble() * 2)).toStringAsFixed(1), // generate random rating from 3 to 5. 
       };
       emit(SearchSuccess(trip));
 

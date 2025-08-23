@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:travel_app/controllers/favorites/favorites_controller.dart';
 import 'package:travel_app/controllers/home/home_controller.dart';
 import 'package:travel_app/core/colors.dart';
 import 'package:travel_app/core/data/shared_preference.dart';
@@ -11,30 +11,8 @@ import 'package:travel_app/pages/search/search_page.dart';
 import 'package:travel_app/pages/splash/splash_page.dart';
 import 'package:travel_app/pages/trip_details/trip_details_page.dart';
 
-// ignore: must_be_immutable
 class HomePage extends StatelessWidget {
-  HomePage({super.key});
-
-  // // app pages.
-  // final _pages = [
-  //   // home.
-  //   HomePage(),
-
-  //   // my trips.
-
-  //   // favorites.
-
-  //   // community.
-
-  // ];
-
-  // selected page.
-  int _selectedPage = 0;
-
-  // navigation function.
-  void _navigate(int index) {
-    _selectedPage = index;
-  }
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,28 +25,8 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: ColorsManager.white,
-      bottomNavigationBar: CurvedNavigationBar(
-        color: ColorsManager.darkBrown,
-        backgroundColor: ColorsManager.white,
-        animationCurve: Curves.linearToEaseOut,
-        index: _selectedPage, // display the current index page.
-        onTap: _navigate, // onTap? navigate to the page.
-        items: [
-          // home.
-          Icon(Icons.home_outlined, size: 30, color: Colors.white),
-
-          // my trips
-          Icon(Icons.map_outlined, size: 30, color: Colors.white),
-
-          // favorites.
-          Icon(Icons.favorite_border, size: 30, color: Colors.white),
-
-          // community.
-          Icon(Icons.people_outline, size: 30, color: Colors.white),
-        ],
-      ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -90,7 +48,11 @@ class HomePage extends StatelessWidget {
                 // temp logout button.
                 IconButton(
                   onPressed: () {
+                    // clear the shared preference.
                     SharedPreferenceHelper().clear();
+                    // close the stream supscription.
+                    context.read<FavoritesCubit>().close(); 
+                    // navigate to the splash page.
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (_) => const SplashPage()),
@@ -123,6 +85,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ],
+              actionsPadding: EdgeInsets.all(8),
             ),
 
             BlocBuilder<HomeCubit, HomeState>(
@@ -160,95 +123,129 @@ class HomePage extends StatelessWidget {
                           child: Container(
                             height: 350,
                             width: double.infinity,
-                            padding: EdgeInsets.all(15),
+                            margin: EdgeInsets.symmetric(horizontal: 8),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
-                              image: DecorationImage(
-                                image: NetworkImage(randomTrip['image']),
-                                fit: BoxFit.cover,
-                                onError: (exception, stackTrace) => const Icon(Icons.broken_image_outlined, color: Colors.grey, size: 40,),
-                              ),
+                              boxShadow: [
+                                BoxShadow(color: Colors.grey, blurRadius: 12),
+                              ],
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // new for you.
-                                    Container(
-                                      padding: EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(25),
-                                        color: ColorsManager.darkBrown,
-                                      ),
-                                      child: Text(
-                                        'New for you',
-                                        style: GoogleFonts.robotoFlex(
-                                          color: ColorsManager.white,
-                                        ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadiusGeometry.circular(25),
+                              child: Stack(
+                                children: [
+                                  // random trip image.
+                                  CachedNetworkImage(
+                                    imageUrl: randomTrip['image'],
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.brown,
                                       ),
                                     ),
-
-                                    // rating.
-                                    // Container(
-                                    //   padding: EdgeInsets.all(5),
-                                    //   decoration: BoxDecoration(
-                                    //     borderRadius: BorderRadius.circular(25),
-                                    //     color: Colors.white70,
-                                    //   ),
-                                    //   child: Row(
-                                    //     mainAxisAlignment:
-                                    //         MainAxisAlignment.spaceEvenly,
-                                    //     children: [
-                                    //       // star.
-                                    //       Icon(
-                                    //         Icons.star_purple500_sharp,
-                                    //         color: Colors.amber,
-                                    //       ),
-
-                                    //       // rating.
-                                    //       Text(
-                                    //         newTrip['rating'],
-                                    //         style: TextStyle(
-                                    //           fontWeight: FontWeight.bold,
-                                    //         ),
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // ),
-                                  ],
-                                ),
-
-                                const Spacer(),
-
-                                // trip name.
-                                Text(
-                                  randomTrip['title'],
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                                    errorWidget: (context, url, error) =>
+                                        const Center(
+                                          child: Icon(
+                                            Icons.broken_image_outlined,
+                                            color: Colors.grey,
+                                            size: 40,
+                                          ),
+                                        ),
+                                    fit: BoxFit.cover,
+                                    height: 350,
+                                    width: double.infinity,
                                   ),
-                                ),
 
-                                // description.
-                                Text(
-                                  randomTrip['description'],
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    color: ColorsManager.white,
-                                    fontSize: 18,
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // new for you.
+                                            Container(
+                                              padding: EdgeInsets.all(8),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
+                                                color: ColorsManager.darkBrown,
+                                              ),
+                                              child: Text(
+                                                'New for you',
+                                                style: GoogleFonts.robotoFlex(
+                                                  color: ColorsManager.white,
+                                                ),
+                                              ),
+                                            ),
+
+                                            // rating.
+                                            Container(
+                                              padding: EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
+                                                color: Colors.white70,
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  // star.
+                                                  Icon(
+                                                    Icons.star_purple500_sharp,
+                                                    color: Colors.amber,
+                                                  ),
+
+                                                  // rating.
+                                                  Text(
+                                                    randomTrip['rating'],
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                        const Spacer(),
+
+                                        // trip name.
+                                        Text(
+                                          randomTrip['title'],
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+
+                                        // description.
+                                        Text(
+                                          randomTrip['description'],
+                                          maxLines: 2,
+                                          style: TextStyle(
+                                            color: ColorsManager.white,
+                                            fontSize: 18,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
 
                         const SizedBox(height: 20),
+
                         // popular destinations.
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -268,8 +265,9 @@ class HomePage extends StatelessWidget {
                                 // navigate to destinations page.
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                        DestinationsPage(trips: state.popularTrips),
+                                    builder: (_) => DestinationsPage(
+                                      trips: state.popularTrips,
+                                    ),
                                   ),
                                 );
                               },
@@ -303,12 +301,12 @@ class HomePage extends StatelessWidget {
                         Container(
                           height: 280,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16)
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           child: ListView.separated(
                             itemCount: state.popularTrips.length,
                             separatorBuilder: (context, index) =>
-                                const SizedBox(width: 10),
+                                const SizedBox(width: 20),
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
                               // current index trip.
@@ -317,6 +315,7 @@ class HomePage extends StatelessWidget {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  const SizedBox(height: 5),
                                   // trip image.
                                   GestureDetector(
                                     onTap: () {
@@ -327,20 +326,90 @@ class HomePage extends StatelessWidget {
                                       height: 175,
                                       width: 175,
                                       decoration: BoxDecoration(
-                                        // borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(20),
                                         boxShadow: [
-                                          BoxShadow(color: Colors.grey.shade300, blurRadius: 12)
-                                        ]
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            blurRadius: 8,
+                                          ),
+                                        ],
                                       ),
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: CachedNetworkImage(
-                                          imageUrl: trip['image'],
-                                          placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.brown,),),
-                                          errorWidget: (context, url, error) => const Center(child: Icon(Icons.broken_image_outlined, color: Colors.grey, size: 40,)),
-                                          fit: BoxFit.cover,
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Stack(
+                                          children: [
+                                            // current trip image.
+                                            CachedNetworkImage(
+                                              imageUrl: trip['image'],
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                          color: Colors.brown,
+                                                        ),
+                                                  ),
+                                              errorWidget:
+                                                  (
+                                                    context,
+                                                    url,
+                                                    error,
+                                                  ) => const Center(
+                                                    child: Icon(
+                                                      Icons
+                                                          .broken_image_outlined,
+                                                      color: Colors.grey,
+                                                      size: 40,
+                                                    ),
+                                                  ),
+                                              fit: BoxFit.cover,
+                                              height: 175,
+                                              width: 175,
+                                            ),
+
+                                            // current trip rating.
+                                            Positioned(
+                                              top: 8,
+                                              right: 8,
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    padding: EdgeInsets.all(5),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            25,
+                                                          ),
+                                                      color: Colors.white70,
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceEvenly,
+                                                      children: [
+                                                        // star.
+                                                        Icon(
+                                                          Icons
+                                                              .star_purple500_sharp,
+                                                          color: Colors.amber,
+                                                        ),
+
+                                                        // rating.
+                                                        Text(
+                                                          trip['rating'],
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      )
+                                      ),
                                     ),
                                   ),
 
@@ -355,8 +424,6 @@ class HomePage extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-
-                                  // const SizedBox(height: 15),
 
                                   // trip description.
                                   SizedBox(
