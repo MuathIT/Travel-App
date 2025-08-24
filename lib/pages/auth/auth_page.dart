@@ -11,10 +11,10 @@ class AuthPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Align(
-          alignment: Alignment.topLeft,
+      floatingActionButton: Align(
+        alignment: Alignment.topLeft,
+        child: Container(
+          margin: EdgeInsets.only(top: 80, left: 15),
           child: FloatingActionButton.small(
             elevation: 0,
             hoverElevation: 0,

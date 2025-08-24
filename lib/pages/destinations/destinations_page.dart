@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_app/core/colors.dart';
+import 'package:travel_app/models/trip_model.dart';
 import 'package:travel_app/pages/trip_details/trip_details_page.dart';
 
 class DestinationsPage extends StatelessWidget {
-  final List<Map<String, dynamic>> trips; // get the trips.
+  final List<Trip> trips; // get the trips.
   const DestinationsPage({super.key, required this.trips});
 
   @override
@@ -63,7 +64,7 @@ class DestinationsPage extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: CachedNetworkImage(
-                      imageUrl: trip['image'],
+                      imageUrl: trip.image,
                       placeholder: (context, url) => const Center(
                         child: CircularProgressIndicator(color: Colors.brown),
                       ),
@@ -82,7 +83,7 @@ class DestinationsPage extends StatelessWidget {
               const SizedBox(height: 5),
               // trip name.
               Text(
-                trip['title'],
+                trip.title,
                 style: TextStyle(
                   color: ColorsManager.darkBrown,
                   fontSize: 14,

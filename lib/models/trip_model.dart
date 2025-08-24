@@ -4,11 +4,13 @@ class Trip{
   final String title; // trip name.
   final String description; // trip description.
   final String image; // trip image.
+  final String rating; // trip rating.
 
   Trip({
     required this.title,
     required this.description,
-    required this.image
+    required this.image,
+    required this.rating
   });
 
   // convert to map.
@@ -16,7 +18,8 @@ class Trip{
     return {
       'title' : title,
       'description' : description,
-      'image' : image
+      'image' : image,
+      'rating' : rating
     };
   }
 
@@ -25,7 +28,8 @@ class Trip{
     return Trip(
       title: map['title'] ?? '',
       description: map['description'] ?? '', 
-      image: map['image'] ?? ''
+      image: map['image'] ?? '',
+      rating: map['rating'] ?? ''
     );
   }
 }

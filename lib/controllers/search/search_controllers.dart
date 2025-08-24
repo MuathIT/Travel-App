@@ -1,12 +1,10 @@
-
-
-
 // ---------- Search States ----------
 
 import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:travel_app/models/trip_model.dart';
 
 abstract class SearchState {}
 
@@ -21,7 +19,7 @@ class SearchEmpty extends SearchState {
 
 // state for the trip details.
 class SearchSuccess extends SearchState {
-  final Map<String, dynamic> trip; // get the trip.
+  final Trip trip; // get the trip.
   SearchSuccess(this.trip);
 }
 
@@ -39,16 +37,15 @@ class SearchFailure extends SearchState {
 // ---------- Search Cubit ----------
 
 class SearchCubit extends Cubit<SearchState> {
-  SearchCubit() : super (SearchInitial());
+  SearchCubit() : super(SearchInitial());
 
-  
   // import dio package.
   final dio = Dio();
 
   // this method will give the user suggestions while he types.
-  Future<void> getSuggestions (String query) async{
+  Future<void> getSuggestions(String query) async {
     // handle the empty.
-    if (query.isEmpty){
+    if (query.isEmpty) {
       emit(SearchInitial());
       return;
     }
@@ -59,15 +56,16 @@ class SearchCubit extends Cubit<SearchState> {
     try {
       final response = await dio.get(
         'https://en.wikipedia.org/w/api.php',
-        queryParameters: { // to give suggestions while user types.
-          "action" : "opensearch", // search type.
-          "search" : query, // the current query value.
-          "limit" : 10, // the first 10 trips.
-          "format" : "json" // the response format.
-        }
+        queryParameters: {
+          // to give suggestions while user types.
+          "action": "opensearch", // search type.
+          "search": query, // the current query value.
+          "limit": 10, // the first 10 trips.
+          "format": "json", // the response format.
+        },
       );
 
-      // final response = await dio.get( 
+      // final response = await dio.get(
       //   'https://api.allorigins.win/get?url=${Uri.encodeComponent('https://en.wikipedia.org/w/api.php?action=opensearch&search=$query&limit=10&format=json')}'
       // ); // this for CROS proxy in web.
 
@@ -75,13 +73,13 @@ class SearchCubit extends Cubit<SearchState> {
       final List suggestions = response.data[1];
 
       // handle the empty suggestions.
-      if (suggestions.isEmpty){
+      if (suggestions.isEmpty) {
         emit(SearchEmpty('No suggestions found'));
+      } else {
+        emit(
+          SearchSuggestions(List<String>.from(suggestions)),
+        ); // convert the list from dynamic to string and then send it to the state.
       }
-      else{
-        emit(SearchSuggestions(List<String>.from(suggestions))); // convert the list from dynamic to string and then send it to the state.
-      }
-      
     } on DioException catch (e) {
       emit(SearchFailure("Error: ${e.message}"));
     } catch (e) {
@@ -90,10 +88,9 @@ class SearchCubit extends Cubit<SearchState> {
   }
 
   // this method will get the searched trip.
-  Future<void> getTrip (String destination) async{
-
+  Future<void> getTrip(String destination) async {
     // handle the empty.
-    if (destination.isEmpty){
+    if (destination.isEmpty) {
       emit(SearchInitial());
       return;
     }
@@ -103,11 +100,11 @@ class SearchCubit extends Cubit<SearchState> {
     // get the trip from the API.
     try {
       final response = await dio.get(
-        'https://en.wikipedia.org/api/rest_v1/page/summary/$destination'
+        'https://en.wikipedia.org/api/rest_v1/page/summary/$destination',
       );
 
       // handle the null response.
-      if (response.data == null){
+      if (response.data == null) {
         emit(SearchEmpty('No Trip found for $destination'));
         return;
       }
@@ -116,25 +113,24 @@ class SearchCubit extends Cubit<SearchState> {
       final data = response.data as Map<String, dynamic>;
 
       // handle the empty data.
-      if (data.isEmpty){
+      if (data.isEmpty) {
         emit(SearchEmpty('No Trip found for $destination'));
         return;
       }
 
       // extract the needed fields & handle their null values.
-      final trip = {
-        'title' : data['title'] ?? 'Unknown',
-        'description' : data['extract'] ?? 'No description available' ,
-        'image' : data['originalimage']['source'] ?? 'No image to display',
-        'rating' : ( (3 + Random().nextDouble() * 2)).toStringAsFixed(1), // generate random rating from 3 to 5. 
-      };
-      emit(SearchSuccess(trip));
+      final trip = Trip(
+        title: data['title'] ?? 'Unknown',
+        description: data['extract'] ?? 'No description available',
+        image: data['originalimage']['source'] ?? 'No image to display',
+        rating: ((3 + Random().nextDouble() * 2)).toStringAsFixed(1), // generate random rating from 3 to 5.
+      );
 
+      emit(SearchSuccess(trip));
     } on DioException catch (e) {
       emit(SearchFailure("Error: ${e.message}"));
     } catch (e) {
       emit(SearchFailure('Unexpected error: $e'));
     }
-    
   }
 }

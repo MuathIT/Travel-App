@@ -3,78 +3,67 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:like_button/like_button.dart';
 import 'package:travel_app/controllers/favorite/favorite_controller.dart';
-import 'package:travel_app/controllers/favorites/favorites_controller.dart';
+import 'package:travel_app/models/trip_model.dart';
 
 class TripDetailsPage extends StatelessWidget {
-  final Map<String, dynamic> trip;
+  final Trip trip;
   const TripDetailsPage({super.key, required this.trip});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      floatingActionButton: BlocBuilder<FavoritesCubit, FavoritesState>(
-        builder: (context, favState) {
-          if (favState is FavoritesSuccess) {
-            final isFavorited = favState.favoriteTrips.any(
-              (t) => t['title'] == trip['title'],
-            ); // check if trip already in favorites
-
-            // bloc consumer for add/remove cubit.
-            return BlocConsumer<FavoriteCubit, FavoriteState>(
-              listener: (context, state) {
-                if (state is FavoriteFailure) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.red,
-                      content: Text(state.failureMessage),
-                      duration: Duration(milliseconds: 900),
-                    ),
-                  );
-                } else if (state is FavoriteSuccess) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.green,
-                      content: Text('Favorites updated'),
-                      duration: Duration(milliseconds: 900),
-                    ),
-                  );
-                }
-              },
-              builder: (context, state) {
-                return FloatingActionButton(
-                  backgroundColor: Colors.grey[200],
-                  splashColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  shape: const CircleBorder(),
-                  onPressed: null, // disable default tap, we’ll use LikeButton
-                  child: LikeButton(
-                    isLiked: isFavorited,
-                    onTap: (liked) async {
-                      if (liked) {
-                        // already liked → remove from favorites
-                        context.read<FavoriteCubit>().removeFromFavorite(
-                          trip['title'],
-                        );
-                      } else {
-                        // not liked → add to favorites
-                        context.read<FavoriteCubit>().addToFavorite(trip);
-                      }
-                      return !liked; // toggle button state
-                    },
-                    likeBuilder: (bool liked) {
-                      return Icon(
-                        liked ? Icons.favorite : Icons.favorite_border,
-                        color: liked ? Colors.red : Colors.grey,
-                        size: 30,
-                      );
-                    },
-                  ),
-                );
-              },
+      floatingActionButton: BlocConsumer<FavoriteCubit, FavoriteState>(
+        listener: (context, state) {
+          if (state is FavoriteFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Colors.red,
+                content: Text(state.failureMessage),
+                duration: Duration(milliseconds: 900),
+              ),
+            );
+          } else if (state is FavoriteSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Colors.green,
+                content: Text('Favorites updated'),
+                duration: Duration(milliseconds: 900),
+              ),
             );
           }
-          return const SizedBox.shrink();
+        },
+        builder: (context, state) {
+          return FloatingActionButton(
+            backgroundColor: Colors.grey[200],
+            splashColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            shape: const CircleBorder(),
+            onPressed: null, // disable default tap, we’ll use LikeButton
+            child: LikeButton(
+              isLiked: false,
+              onTap: (liked) async {
+                if (liked) {
+                  // already liked → remove from favorites
+                  context.read<FavoriteCubit>().removeFromFavorite(
+                    trip.title,
+                  );
+                } else {
+                  // not liked → add to favorites
+                  context.read<FavoriteCubit>().addToFavorite(trip);
+                }
+                return !liked; // toggle button state
+              },
+              likeBuilder: (bool liked) {
+                return Icon(
+                  liked ? Icons.favorite : Icons.favorite_border,
+                  color: liked ? Colors.red : Colors.grey,
+                  size: 30,
+                );
+              },
+            ),
+          );
+          // return const SizedBox.shrink();
         },
       ),
       appBar: AppBar(
@@ -93,7 +82,7 @@ class TripDetailsPage extends StatelessWidget {
         centerTitle: true,
         title: Text(
           // trip name.
-          trip['title'],
+          trip.title,
           style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold),
         ),
 
@@ -109,7 +98,7 @@ class TripDetailsPage extends StatelessWidget {
 
           // rating.
           Text(
-            trip['rating'],
+            trip.rating,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(width: 5),
@@ -132,7 +121,7 @@ class TripDetailsPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 child: CachedNetworkImage(
                   // this widget let you handle the image loading & error.
-                  imageUrl: trip['image'],
+                  imageUrl: trip.image,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => const Center(
                     child: CircularProgressIndicator(color: Colors.brown),
@@ -150,7 +139,7 @@ class TripDetailsPage extends StatelessWidget {
 
             // trip description.
             Text(
-              trip['description'],
+              trip.description,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 18,

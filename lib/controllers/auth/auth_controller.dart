@@ -25,7 +25,7 @@ class AuthFailure extends AuthState {
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super (AuthInitial());
-
+  
   // register method.
   Future<void> register (String name, String email, String password) async{
     final uid = FirebaseAuth.instance.currentUser?.uid;

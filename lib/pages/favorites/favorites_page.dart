@@ -92,7 +92,7 @@ class FavoritesScreen extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
                           child: CachedNetworkImage(
-                            imageUrl: trip['image'],
+                            imageUrl: trip.image,
                             placeholder: (context, url) => const Center(
                               child: CircularProgressIndicator(
                                 color: Colors.brown,
@@ -113,7 +113,7 @@ class FavoritesScreen extends StatelessWidget {
                     const SizedBox(height: 5),
                     // trip name.
                     Text(
-                      trip['title'],
+                      trip.title,
                       style: TextStyle(
                         color: ColorsManager.darkBrown,
                         fontSize: 14,

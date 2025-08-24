@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:travel_app/models/trip_model.dart';
 
 
 abstract class FavoritesState {}
@@ -14,7 +15,7 @@ class FavoritesInitial extends FavoritesState {}
 class FavoritesLoading extends FavoritesState {}
 
 class FavoritesSuccess extends FavoritesState {
-  final List favoriteTrips; // get the favorite trips.
+  final List<Trip> favoriteTrips; // get the favorite trips.
   FavoritesSuccess(this.favoriteTrips);
 }
 
@@ -56,7 +57,7 @@ class FavoritesCubit extends Cubit<FavoritesState>{
         final trips = snapshot.docs.map((doc) {
           final data = doc.data();
           data['id'] = doc.id; // keep doc id for easy add/remove later
-          return data;
+          return Trip.fromMap(data);
         }).toList();
 
         if (trips.isEmpty) {
@@ -72,6 +73,7 @@ class FavoritesCubit extends Cubit<FavoritesState>{
     }
   }
 
+
   // clean up the Firestore subscription
   @override
   Future<void> close() {
@@ -79,13 +81,4 @@ class FavoritesCubit extends Cubit<FavoritesState>{
     return super.close();
   }
 
-  // this method will tell if the trip is added or not.
-  // bool isFavorited (String tripTitle){
-  //   if (state is FavoritesLoading){
-  //     return (state as FavoritesSuccess)
-  //     .favoriteTrips
-  //     .any((trip) => trip['title'] == tripTitle); // checks if the given trip id is already in the favorites list.
-  //   }
-  //   return false;
-  // }
 }
