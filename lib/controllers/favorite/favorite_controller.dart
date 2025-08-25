@@ -38,7 +38,8 @@ class FavoriteCubit extends Cubit<FavoriteState> {
           'title' : trip.title,
           'description' : trip.description,
           'image' : trip.image,
-          'rating' : trip.rating
+          'rating' : trip.rating,
+          'isFavorited' : true
         }
       );
       emit(FavoriteSuccess());

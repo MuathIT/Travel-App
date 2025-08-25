@@ -41,7 +41,7 @@ class TripDetailsPage extends StatelessWidget {
             shape: const CircleBorder(),
             onPressed: null, // disable default tap, we’ll use LikeButton
             child: LikeButton(
-              isLiked: false,
+              isLiked: trip.isFavorited,
               onTap: (liked) async {
                 if (liked) {
                   // already liked → remove from favorites

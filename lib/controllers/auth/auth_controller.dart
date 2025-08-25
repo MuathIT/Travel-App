@@ -7,6 +7,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travel_app/core/data/shared_preference.dart';
+import 'package:travel_app/core/data/user_helper.dart';
 
 abstract class AuthState {}
 
@@ -26,15 +27,17 @@ class AuthFailure extends AuthState {
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super (AuthInitial());
   
+  // store the firebaseAuth instance.
+  final _auth = FirebaseAuth.instance;
+
   // register method.
   Future<void> register (String name, String email, String password) async{
-    final uid = FirebaseAuth.instance.currentUser?.uid;
     emit (AuthLoading());
     try {
       // register the user.
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+      await _auth.createUserWithEmailAndPassword(email: email, password: password);
       // save the user data in a document.
-      await FirebaseFirestore.instance.collection('users').doc(uid).set(
+      await FirebaseFirestore.instance.collection('users').doc(UserHelper.uid).set(
         {
           'name' : name,
           'email' : email,
@@ -54,7 +57,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     try {
       // login the user.
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
       emit(AuthSuccess());
       SharedPreferenceHelper().setString('uEmail', email);
     } on FirebaseAuthException catch (e) {

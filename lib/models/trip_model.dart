@@ -5,12 +5,14 @@ class Trip{
   final String description; // trip description.
   final String image; // trip image.
   final String rating; // trip rating.
+  final bool? isFavorited;
 
   Trip({
     required this.title,
     required this.description,
     required this.image,
-    required this.rating
+    required this.rating,
+    this.isFavorited = false
   });
 
   // convert to map.
@@ -19,7 +21,8 @@ class Trip{
       'title' : title,
       'description' : description,
       'image' : image,
-      'rating' : rating
+      'rating' : rating,
+      'isFavorited' : false
     };
   }
 
@@ -29,7 +32,8 @@ class Trip{
       title: map['title'] ?? '',
       description: map['description'] ?? '', 
       image: map['image'] ?? '',
-      rating: map['rating'] ?? ''
+      rating: map['rating'] ?? '',
+      isFavorited: map['isFavorited'] ?? false
     );
   }
 }

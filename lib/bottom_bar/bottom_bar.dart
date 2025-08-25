@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:travel_app/core/colors.dart';
 import 'package:travel_app/pages/favorites/favorites_page.dart';
 import 'package:travel_app/pages/home/home_page.dart';
-import 'package:travel_app/pages/my_trips/my_trips_page.dart';
-import 'package:travel_app/pages/profile/profile_page.dart';
+
 
 class BottomBar extends StatefulWidget {
   const BottomBar({super.key});
@@ -23,14 +22,8 @@ class _BottomBarState extends State<BottomBar> {
     // home.
     HomePage(),
 
-    // my trips.
-    MyTripsPage(),
-
     // favorites.
     FavoritesPage(),
-
-    // community.
-    ProfilePage()
   ];
 
   // selected page.
@@ -49,7 +42,7 @@ class _BottomBarState extends State<BottomBar> {
       backgroundColor: ColorsManager.white,
       bottomNavigationBar: CurvedNavigationBar(
         color: ColorsManager.darkBrown,
-        backgroundColor: ColorsManager.white,
+        backgroundColor: _selectedPage == 0 ? ColorsManager.white : Colors.grey.shade200,
         animationCurve: Curves.linearToEaseOut,
         index: _selectedPage, // display the current index page.
         onTap: _navigate, // onTap? navigate to the page.
@@ -57,14 +50,8 @@ class _BottomBarState extends State<BottomBar> {
           // home.
           Icon(Icons.home_outlined, size: 30, color: Colors.white),
 
-          // my trips
-          Icon(Icons.map_outlined, size: 30, color: Colors.white),
-
           // favorites.
           Icon(Icons.favorite_border, size: 30, color: Colors.white),
-
-          // community.
-          Icon(Icons.people_outline, size: 30, color: Colors.white),
         ],
       ),
       body: _pages[_selectedPage],

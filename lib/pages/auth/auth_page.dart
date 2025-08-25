@@ -38,8 +38,9 @@ class AuthPage extends StatelessWidget {
           }
           else if (state is AuthSuccess){
             // navigate to home page.
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => BottomBar())
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const BottomBar()),
+              (_) => false
             );
           }
           else if (state is AuthFailure){
